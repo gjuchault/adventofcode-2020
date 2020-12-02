@@ -1,9 +1,11 @@
 use std::env;
 
 mod day1;
+mod day2;
 
 mod utils {
     pub mod read_input;
+    pub mod string;
 }
 
 fn main() {
@@ -20,6 +22,9 @@ fn main() {
 
     match day.as_str() {
         "day1" => day1::run(),
+        "day2" => day2::run(),
         _ => println!("Day not found"),
     }
+
+    std::process::exit(0);
 }
