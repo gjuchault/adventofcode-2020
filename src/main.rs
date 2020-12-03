@@ -4,7 +4,7 @@ mod day1;
 mod day2;
 
 mod utils {
-    pub mod read_input;
+    pub mod input;
     pub mod string;
 }
 

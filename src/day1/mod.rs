@@ -1,7 +1,7 @@
 use crate::utils;
 
 fn part1() {
-    let input: String = utils::read_input::read("day1");
+    let input: String = utils::input::read("day1");
 
     let numbers: Vec<&str> = input.split("\n").collect();
 
@@ -24,7 +24,7 @@ fn part1() {
 }
 
 fn part2() {
-    let input: String = utils::read_input::read("day1");
+    let input: String = utils::input::read("day1");
     let numbers: Vec<&str> = input.split("\n").collect();
 
     for i in 0..numbers.len() {

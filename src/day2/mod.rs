@@ -20,7 +20,7 @@ fn parse_password_line(input: &str, password_line_re: &regex::Regex) -> Password
     let challenge = &r[4];
 
     return PasswordLine {
-        letter: String::from(letter).chars().next().unwrap(),
+        letter: utils::string::char_at(String::from(letter), 0, '_'),
         min: min,
         max: max,
         challenge: String::from(challenge),
@@ -39,8 +39,8 @@ fn is_password_line_valid(input: PasswordLine) -> bool {
 }
 
 fn is_password_line_valid_2(input: PasswordLine) -> bool {
-    let letter_at_min = utils::string::char_at(input.challenge.clone(), input.min - 1, Some('_'));
-    let letter_at_max = utils::string::char_at(input.challenge.clone(), input.max - 1, Some('_'));
+    let letter_at_min = utils::string::char_at(input.challenge.clone(), input.min - 1, '_');
+    let letter_at_max = utils::string::char_at(input.challenge.clone(), input.max - 1, '_');
 
     let letter_min_match = letter_at_min == input.letter;
     let letter_max_match = letter_at_max == input.letter;
@@ -72,7 +72,7 @@ fn part2(password_lines: Vec<PasswordLine>) {
 
 pub fn run() {
     println!("Running day2");
-    let input: String = utils::read_input::read("day2");
+    let input: String = utils::input::read("day2");
     let password_line_re = Regex::new(r"^(\d+)-(\d+) (\w): (\w+)$").unwrap();
 
     let password_lines_inputs: Vec<&str> = input.split("\n").collect();
