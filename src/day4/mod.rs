@@ -32,11 +32,7 @@ impl fmt::Display for Passport {
 }
 
 impl Passport {
-    pub fn is_valid(&self, enforce_cid: bool) -> bool {
-        if enforce_cid && self.cid.is_none() {
-            return false;
-        }
-
+    pub fn is_valid(&self) -> bool {
         if self.ecl.is_none()
             || self.pid.is_none()
             || self.eyr.is_none()
@@ -50,13 +46,91 @@ impl Passport {
 
         return true;
     }
+
+    pub fn are_fields_valid(&self) -> bool {
+        if !self.clone().is_valid() {
+            return false;
+        }
+
+        if !validate_numeric_value(self.byr.clone().unwrap(), "", 1920, 2002) {
+            return false;
+        }
+
+        if !validate_numeric_value(self.iyr.clone().unwrap(), "", 2010, 2020) {
+            return false;
+        }
+
+        if !validate_numeric_value(self.eyr.clone().unwrap(), "", 2020, 2030) {
+            return false;
+        }
+
+        if !validate_numeric_value(self.hgt.clone().unwrap(), "cm", 150, 193) {
+            if !validate_numeric_value(self.hgt.clone().unwrap(), "in", 59, 76) {
+                return false;
+            }
+        }
+
+        if !validate_color(self.hcl.clone().unwrap().to_lowercase()) {
+            return false;
+        }
+
+        let valid_ecl = vec!["amb", "blu", "brn", "gry", "grn", "hzl", "oth"];
+
+        if !valid_ecl.contains(&self.ecl.clone().unwrap().as_str()) {
+            return false;
+        }
+
+        let pid_length = self.pid.clone().unwrap().len();
+        if !utils::string::is_numeric(self.pid.clone().unwrap()) || pid_length != 9 {
+            return false;
+        }
+
+        return true;
+    }
+}
+
+fn validate_numeric_value(input: String, unit: &str, min: u32, max: u32) -> bool {
+    if !input.ends_with(unit) {
+        return false;
+    }
+
+    let without_unit = String::from(&input[0..input.len() - unit.len()]);
+    let parse_result = without_unit.parse::<u32>();
+
+    if parse_result.is_err() {
+        return false;
+    }
+
+    let numerical_value = parse_result.unwrap();
+
+    return numerical_value >= min && numerical_value <= max;
+}
+
+fn validate_color(input: String) -> bool {
+    if !input.starts_with("#") {
+        return false;
+    }
+
+    if input.len() != 7 {
+        return false;
+    }
+
+    let hexa_characters: Vec<String> = (0..16).map(|v| format!("{:x}", v)).collect();
+
+    for i in 1..input.len() {
+        if !hexa_characters.contains(&String::from(&input[i..i + 1])) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 fn part1(passports: Vec<Passport>) {
     let now = SystemTime::now();
     let mut valid_passports = 0;
     for i in 0..passports.len() {
-        if passports[i].is_valid(false) {
+        if passports[i].is_valid() {
             valid_passports += 1;
         }
     }
@@ -66,8 +140,13 @@ fn part1(passports: Vec<Passport>) {
 
 fn part2(passports: Vec<Passport>) {
     let now = SystemTime::now();
-    let result = 0;
-    println!("Part 2: {}", result);
+    let mut valid_passports = 0;
+    for i in 0..passports.len() {
+        if passports[i].are_fields_valid() {
+            valid_passports += 1;
+        }
+    }
+    println!("Part 2: {}", valid_passports);
     println!("Part 2 took: {}ms", now.elapsed().unwrap().as_millis());
 }
 

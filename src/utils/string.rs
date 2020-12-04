@@ -13,3 +13,14 @@ pub fn count_char(input: String, sub: char) -> u32 {
 
     return occurences;
 }
+
+pub fn is_numeric(input: String) -> bool {
+    let valid_numeric_characters = vec!['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    for c in input.chars() {
+        if !valid_numeric_characters.contains(&c) {
+            return false;
+        }
+    }
+
+    return true;
+}
