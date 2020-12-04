@@ -1,7 +1,7 @@
 use crate::utils;
 use regex::Regex;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 struct PasswordLine {
     letter: char,
     min: u32,

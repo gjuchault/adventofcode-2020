@@ -2,8 +2,10 @@ use std::env;
 
 mod day1;
 mod day2;
+mod day3;
 
 mod utils {
+    pub mod grid;
     pub mod input;
     pub mod string;
 }
@@ -23,6 +25,7 @@ fn main() {
     match day.as_str() {
         "day1" => day1::run(),
         "day2" => day2::run(),
+        "day3" => day3::run(),
         _ => println!("Day not found"),
     }
 
