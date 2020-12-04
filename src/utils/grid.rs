@@ -19,7 +19,6 @@ where
     TCell: Copy,
     TCell: fmt::Display,
 {
-    pub actual_position: Coordinates,
     pub width: u32,
     pub height: u32,
     grid: Vec<Vec<TCell>>,
@@ -51,7 +50,7 @@ where
 
             write!(f, "\n")?;
         }
-        write!(f, "{}", self.actual_position)
+        write!(f, "\n")
     }
 }
 
@@ -59,7 +58,6 @@ pub fn parse_grid<TCell, TIteratee>(
     input: String,
     default_value: TCell,
     iteratee: TIteratee,
-    actual_position: Coordinates,
 ) -> Grid<TCell>
 where
     TCell: Copy,
@@ -67,8 +65,7 @@ where
     TIteratee: Fn(char) -> TCell,
 {
     let height: u32 = utils::string::count_char(input.clone(), '\n');
-    let width: u32 = (input.len() as u32 - height) / height;
-
+    let width: u32 = (input.len() as u32 - height) / (height + 1);
     let mut grid: Vec<Vec<TCell>> =
         vec![vec![default_value; (width) as usize]; (height + 1) as usize];
 
@@ -86,14 +83,12 @@ where
         }
 
         grid[y as usize][x as usize] = iteratee(char_at_pos);
-
         x += 1;
     }
 
     return Grid {
         width,
         height,
-        actual_position,
         grid,
     };
 }
