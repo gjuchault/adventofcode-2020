@@ -1,5 +1,6 @@
 use crate::utils;
 use regex::Regex;
+use std::time::SystemTime;
 
 #[derive(Debug, Clone)]
 struct PasswordLine {
@@ -49,6 +50,8 @@ fn is_password_line_valid_2(input: PasswordLine) -> bool {
 }
 
 fn part1(password_lines: Vec<PasswordLine>) {
+    let now = SystemTime::now();
+
     let mut valid_passwords: u32 = 0;
     for password_line in password_lines {
         if is_password_line_valid(password_line) {
@@ -56,10 +59,13 @@ fn part1(password_lines: Vec<PasswordLine>) {
         }
     }
 
-    println!("Result: {}", valid_passwords);
+    println!("Part 1: {}", valid_passwords);
+    println!("Part 1 took: {}ms", now.elapsed().unwrap().as_millis());
 }
 
 fn part2(password_lines: Vec<PasswordLine>) {
+    let now = SystemTime::now();
+
     let mut valid_passwords: u32 = 0;
     for password_line in password_lines {
         if is_password_line_valid_2(password_line) {
@@ -67,20 +73,21 @@ fn part2(password_lines: Vec<PasswordLine>) {
         }
     }
 
-    println!("Result: {}", valid_passwords);
+    println!("Part 2: {}", valid_passwords);
+    println!("Part 2 took: {}ms", now.elapsed().unwrap().as_millis());
 }
 
 pub fn run() {
     println!("Running day2");
+    let now = SystemTime::now();
     let input: String = utils::input::read("day2");
     let password_line_re = Regex::new(r"^(\d+)-(\d+) (\w): (\w+)$").unwrap();
-
     let password_lines_inputs: Vec<&str> = input.split("\n").collect();
     let mut password_lines: Vec<PasswordLine> = Vec::with_capacity(password_lines_inputs.len());
     for password_line_input in password_lines_inputs {
         password_lines.push(parse_password_line(password_line_input, &password_line_re));
     }
-
+    println!("Parsing took: {}ms", now.elapsed().unwrap().as_millis());
     part1(password_lines.clone());
     part2(password_lines.clone());
 }

@@ -1,5 +1,6 @@
 use crate::utils;
 use std::fmt;
+use std::time::SystemTime;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 enum CellContent {
@@ -19,6 +20,8 @@ impl fmt::Display for CellContent {
 type TreeMap = utils::grid::Grid<CellContent>;
 
 fn part1(grid: TreeMap) {
+    let now = SystemTime::now();
+
     let mut trees_encountered: u32 = 0;
 
     let mut next_position = grid.actual_position;
@@ -35,10 +38,12 @@ fn part1(grid: TreeMap) {
     }
 
     println!("Part 1: {}", trees_encountered);
+    println!("Part 1 took: {}ms", now.elapsed().unwrap().as_millis());
 }
 
 pub fn run() {
     println!("Running day3");
+    let now = SystemTime::now();
     let input: String = utils::input::read("day3");
     let grid: TreeMap = utils::grid::parse_grid(
         input.clone(),
@@ -51,5 +56,6 @@ pub fn run() {
         utils::grid::Coordinates { x: 0, y: 0 },
     );
 
+    println!("Parsing took: {}ms", now.elapsed().unwrap().as_millis());
     part1(grid);
 }

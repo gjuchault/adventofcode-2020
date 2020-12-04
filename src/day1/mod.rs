@@ -1,6 +1,8 @@
 use crate::utils;
+use std::time::SystemTime;
 
 fn part1() {
+    let now = SystemTime::now();
     let input: String = utils::input::read("day1");
 
     let numbers: Vec<&str> = input.split("\n").collect();
@@ -17,6 +19,7 @@ fn part1() {
 
             if first + iteratee == 2020 {
                 println!("Part 1: {}", first * iteratee);
+                println!("Part 1 took: {}ms", now.elapsed().unwrap().as_millis());
                 return;
             }
         }
@@ -24,6 +27,7 @@ fn part1() {
 }
 
 fn part2() {
+    let now = SystemTime::now();
     let input: String = utils::input::read("day1");
     let numbers: Vec<&str> = input.split("\n").collect();
 
@@ -45,6 +49,7 @@ fn part2() {
                 let item: u32 = numbers[u].parse().unwrap();
                 if first + second + item == 2020 {
                     println!("Part 2: {}", first * second * item);
+                    println!("Part 2 took: {}ms", now.elapsed().unwrap().as_millis());
                     return;
                 }
             }
@@ -54,6 +59,9 @@ fn part2() {
 
 pub fn run() {
     println!("Running day1");
+
+    let now = SystemTime::now();
+    println!("Parsing took: {}ms", now.elapsed().unwrap().as_millis());
 
     part1();
     part2();
