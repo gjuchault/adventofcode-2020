@@ -17,6 +17,7 @@ impl fmt::Display for BinaryChange {
     }
 }
 
+#[derive(Debug, Copy, Clone)]
 struct Ticket {
     row: u32,
     column: u32,
@@ -38,10 +39,45 @@ fn part1(tickets: Vec<Ticket>) {
     println!("Part 1 took: {}ms", now.elapsed().unwrap().as_millis());
 }
 
-fn part2() {
+fn part2(tickets: Vec<Ticket>) {
     let now = SystemTime::now();
+    let max = 2u32.pow(10);
+    let mut result = 0;
 
-    println!("Part 2: {}", 0);
+    let mut all_tickets_ids: Vec<u32> = Vec::with_capacity(max as usize);
+    let mut given_tickets_ids: Vec<u32> = Vec::with_capacity(tickets.len());
+
+    for i in 0..tickets.len() {
+        given_tickets_ids.push(tickets[i].row * 8 + tickets[i].column);
+    }
+
+    for i in 0..max {
+        let bin = format!("{:010b}", i);
+        let mut ticket_str = String::with_capacity(10);
+
+        for bin_index in 0..bin.len() {
+            let bin_char = utils::string::char_at(bin.clone(), bin_index as u32, '_');
+
+            if bin_index < 7 {
+                ticket_str.push(if bin_char == '1' { 'B' } else { 'F' })
+            } else {
+                ticket_str.push(if bin_char == '1' { 'R' } else { 'L' })
+            }
+        }
+
+        let ticket = parse_ticket(ticket_str);
+        all_tickets_ids.push(ticket.row * 8 + ticket.column);
+    }
+
+    for i in 0..all_tickets_ids.len() {
+        let score = all_tickets_ids[i];
+
+        if !given_tickets_ids.contains(&score) && score > 10 && score < 930 {
+            result = score;
+        }
+    }
+
+    println!("Part 2: {}", result);
     println!("Part 2 took: {}ms", now.elapsed().unwrap().as_millis());
 }
 
@@ -77,8 +113,6 @@ fn parse_ticket(input: String) -> Ticket {
     let mut row_binary_operations: Vec<BinaryChange> = Vec::with_capacity(7);
     let mut column_binary_operations: Vec<BinaryChange> = Vec::with_capacity(3);
 
-    println!("{}", input);
-
     for character in 0..input.len() {
         let character_str = utils::string::char_at(input.clone(), character as u32, '_');
         match character_str {
@@ -107,6 +141,6 @@ pub fn run() {
     }
     println!("Parsing took: {}ms", now.elapsed().unwrap().as_millis());
 
-    part1(tickets);
-    part2();
+    part1(tickets.clone());
+    part2(tickets.clone());
 }
