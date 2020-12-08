@@ -65,11 +65,31 @@ fn count_reverse(lf_color: String, full_map: &HashMap<String, Vec<BagContent>>) 
     return result;
 }
 
-fn part2(input: String) {
+fn part2(input: HashMap<String, Vec<BagContent>>) {
     let now = SystemTime::now();
 
-    // println!("Part 2: {}", input);
+    let score = count(String::from("shiny gold"), &input);
+
+    println!("Part 2: {}", score);
     println!("Part 2 took: {}ms", now.elapsed().unwrap().as_millis());
+}
+
+fn count(color: String, input: &HashMap<String, Vec<BagContent>>) -> u32 {
+    let mut score = 0;
+
+    let dependencies = input.get(&color).unwrap();
+
+    if dependencies.len() == 0 {
+        return 0;
+    }
+
+    for dependency in dependencies {
+        let dep_score = count(dependency.color.clone(), input);
+        score += dependency.count * dep_score;
+        score += dependency.count;
+    }
+
+    return score;
 }
 
 pub fn run() {
@@ -115,6 +135,6 @@ pub fn run() {
 
     println!("Parsing took: {}ms", now.elapsed().unwrap().as_millis());
 
-    part1(bags_depencies);
-    part2(input.clone());
+    // part1(bags_depencies.clone());
+    part2(bags_depencies.clone());
 }
