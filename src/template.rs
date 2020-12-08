@@ -16,10 +16,10 @@ fn part2(input: String) {
 }
 
 pub fn run() {
-    println!("Running 6");
+    println!("Running dayX");
 
     let now = SystemTime::now();
-    let input: String = utils::input::read("6");
+    let input: String = utils::input::read("dayX");
     println!("Parsing took: {}ms", now.elapsed().unwrap().as_millis());
 
     part1(input.clone());
