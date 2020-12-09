@@ -4,14 +4,14 @@ use std::time::SystemTime;
 fn part1(input: String) {
     let now = SystemTime::now();
 
-    println!("Part 1: {}", input);
+    println!("Part 1: {}", 0);
     println!("Part 1 took: {}ms", now.elapsed().unwrap().as_millis());
 }
 
 fn part2(input: String) {
     let now = SystemTime::now();
 
-    println!("Part 2: {}", input);
+    println!("Part 2: {}", 0);
     println!("Part 2 took: {}ms", now.elapsed().unwrap().as_millis());
 }
 

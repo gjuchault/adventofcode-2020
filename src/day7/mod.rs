@@ -135,6 +135,6 @@ pub fn run() {
 
     println!("Parsing took: {}ms", now.elapsed().unwrap().as_millis());
 
-    // part1(bags_depencies.clone());
+    part1(bags_depencies.clone());
     part2(bags_depencies.clone());
 }

@@ -7,6 +7,7 @@ mod day4;
 mod day5;
 mod day6;
 mod day7;
+mod day8;
 
 mod utils {
     pub mod grid;
@@ -34,6 +35,7 @@ fn main() {
         "day5" => day5::run(),
         "day6" => day6::run(),
         "day7" => day7::run(),
+        "day8" => day8::run(),
         _ => println!("Day not found"),
     }
 
