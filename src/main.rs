@@ -13,6 +13,7 @@ mod utils {
     pub mod grid;
     pub mod input;
     pub mod string;
+    pub mod vec;
 }
 
 fn main() {

@@ -9,7 +9,7 @@ struct Command {
     argument: i32,
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 enum CommandKind {
     Nop,
     Acc,
@@ -26,20 +26,33 @@ impl fmt::Display for CommandKind {
     }
 }
 
-fn part1(input: &Vec<Command>) {
-    let now = SystemTime::now();
-
-    let mut indexes_encountered: HashSet<usize> = HashSet::new();
+fn run_commands(input: &Vec<Command>, command_index_to_swap: Option<usize>) -> (bool, i32) {
+    let mut indexes_encountered: HashSet<usize> = HashSet::with_capacity(input.len());
     let mut accumulator: i32 = 0;
     let mut command_index: usize = 0;
     loop {
         if indexes_encountered.contains(&command_index) {
-            break;
+            return (true, accumulator);
+        }
+
+        if command_index >= input.len() {
+            return (false, accumulator);
         }
 
         indexes_encountered.insert(command_index);
 
-        let command = input[command_index];
+        let mut command = input[command_index];
+
+        if command_index_to_swap.is_some()
+            && command_index_to_swap.unwrap() == command_index
+            && command.kind != CommandKind::Acc
+        {
+            if command.kind == CommandKind::Jmp {
+                command.kind = CommandKind::Nop;
+            } else {
+                command.kind = CommandKind::Jmp;
+            }
+        }
 
         match command.kind {
             CommandKind::Nop => {
@@ -54,15 +67,43 @@ fn part1(input: &Vec<Command>) {
             }
         }
     }
+}
+
+fn part1(input: &Vec<Command>) {
+    let now = SystemTime::now();
+
+    let (_, accumulator) = run_commands(input, None);
 
     println!("Part 1: {}", accumulator);
     println!("Part 1 took: {}ms", now.elapsed().unwrap().as_millis());
 }
 
-fn part2(input: String) {
+fn part2(input: &Vec<Command>) {
     let now = SystemTime::now();
+    let mut result = 0;
+    let mut current_command_swapped =
+        utils::vec::find_index(input, |command, _| command.kind != CommandKind::Acc).unwrap();
 
-    println!("Part 2: {}", 0);
+    loop {
+        let (is_infinite_loop, accumulator) = run_commands(input, Some(current_command_swapped));
+
+        if !is_infinite_loop {
+            result = accumulator;
+            break;
+        }
+
+        let next_command_to_swap = utils::vec::find_index(input, |command, i| {
+            command.kind != CommandKind::Acc && i > current_command_swapped
+        });
+
+        if next_command_to_swap.is_none() {
+            panic!("Couldn't find another swapping to do");
+        }
+
+        current_command_swapped = next_command_to_swap.unwrap();
+    }
+
+    println!("Part 2: {}", result);
     println!("Part 2 took: {}ms", now.elapsed().unwrap().as_millis());
 }
 
@@ -91,5 +132,5 @@ pub fn run() {
     println!("Parsing took: {}ms", now.elapsed().unwrap().as_millis());
 
     part1(&commands);
-    part2(input.clone());
+    part2(&commands);
 }
