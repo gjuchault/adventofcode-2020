@@ -80,7 +80,7 @@ fn part1(input: &Vec<Command>) {
 
 fn part2(input: &Vec<Command>) {
     let now = SystemTime::now();
-    let mut result = 0;
+    let result: i32;
     let mut current_command_swapped =
         utils::vec::find_index(input, |command, _| command.kind != CommandKind::Acc).unwrap();
 
