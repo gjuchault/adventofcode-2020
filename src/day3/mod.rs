@@ -22,16 +22,20 @@ type TreeMap = utils::grid::Grid<CellContent>;
 fn count_trees_slope(grid: TreeMap, delta_x: u32, delta_y: u32) -> u32 {
     let mut trees_encountered: u32 = 0;
 
-    let mut next_position = utils::grid::Coordinates { x: 0, y: 0 };
+    let mut pos = utils::grid::Coordinates { x: 0, y: 0 };
 
-    while next_position.y < grid.height {
-        next_position = utils::grid::Coordinates {
-            x: next_position.x + delta_x,
-            y: next_position.y + delta_y,
+    loop {
+        if grid.at(pos.x, pos.y) == CellContent::Tree {
+            trees_encountered += 1;
+        }
+
+        pos = utils::grid::Coordinates {
+            x: pos.x + delta_x,
+            y: pos.y + delta_y,
         };
 
-        if grid.at(next_position.x, next_position.y) == CellContent::Tree {
-            trees_encountered += 1;
+        if pos.y >= grid.height {
+            break;
         }
     }
 
@@ -53,11 +57,6 @@ fn part2(grid: TreeMap) {
     let mut score: u32 = 1;
     for (delta_x, delta_y) in deltas {
         let trees_encountered = count_trees_slope(grid.clone(), delta_x, delta_y);
-
-        println!(
-            "For delta ({}, {}): {} trees",
-            delta_x, delta_y, trees_encountered
-        );
 
         score *= trees_encountered;
     }

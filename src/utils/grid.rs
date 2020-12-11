@@ -17,6 +17,7 @@ impl fmt::Display for Coordinates {
 pub struct Grid<TCell>
 where
     TCell: Copy,
+    TCell: PartialEq,
     TCell: fmt::Display,
 {
     pub width: u32,
@@ -24,9 +25,37 @@ where
     grid: Vec<Vec<TCell>>,
 }
 
+impl<TCell> PartialEq for Grid<TCell>
+where
+    TCell: Copy,
+    TCell: PartialEq,
+    TCell: fmt::Display,
+{
+    fn eq(&self, other: &Self) -> bool {
+        if self.width != other.width {
+            return false;
+        }
+
+        if self.height != other.height {
+            return false;
+        }
+
+        for y in 0..self.height {
+            for x in 0..self.width {
+                if self.at(x, y) != other.at(x, y) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+}
+
 impl<TCell> Grid<TCell>
 where
     TCell: Copy,
+    TCell: PartialEq,
     TCell: fmt::Display,
 {
     pub fn at(&self, x: u32, y: u32) -> TCell {
@@ -35,11 +64,67 @@ where
 
         return self.grid[resized_y][resized_x];
     }
+
+    pub fn set(&mut self, x: u32, y: u32, value: TCell) {
+        self.grid[y as usize][x as usize] = value;
+    }
+
+    pub fn get_adjacent_cells(
+        &self,
+        x: u32,
+        y: u32,
+        default: TCell,
+    ) -> (TCell, TCell, TCell, TCell, TCell, TCell, TCell, TCell) {
+        let top_left = if y >= 1 && x >= 1 {
+            self.at(x - 1, y - 1)
+        } else {
+            default
+        };
+        let top_center = if y >= 1 { self.at(x, y - 1) } else { default };
+        let top_right = if y >= 1 && x + 1 < self.width {
+            self.at(x + 1, y - 1)
+        } else {
+            default
+        };
+        let left = if x >= 1 { self.at(x - 1, y) } else { default };
+        let right = if x + 1 < self.width {
+            self.at(x + 1, y)
+        } else {
+            default
+        };
+        let bottom_left = if x >= 1 && y + 1 < self.height {
+            self.at(x - 1, y + 1)
+        } else {
+            default
+        };
+        let bottom_center = if y + 1 < self.height {
+            self.at(x, y + 1)
+        } else {
+            default
+        };
+        let bottom_right = if x + 1 < self.width && y + 1 < self.height {
+            self.at(x + 1, y + 1)
+        } else {
+            default
+        };
+
+        return (
+            top_left,
+            top_center,
+            top_right,
+            left,
+            right,
+            bottom_left,
+            bottom_center,
+            bottom_right,
+        );
+    }
 }
 
 impl<TCell> fmt::Display for Grid<TCell>
 where
     TCell: Copy,
+    TCell: PartialEq,
     TCell: fmt::Display,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -61,13 +146,13 @@ pub fn parse_grid<TCell, TIteratee>(
 ) -> Grid<TCell>
 where
     TCell: Copy,
+    TCell: PartialEq,
     TCell: fmt::Display,
     TIteratee: Fn(char) -> TCell,
 {
-    let height: u32 = utils::string::count_char(input.clone(), '\n');
-    let width: u32 = (input.len() as u32 - height) / (height + 1);
-    let mut grid: Vec<Vec<TCell>> =
-        vec![vec![default_value; (width) as usize]; (height + 1) as usize];
+    let height: u32 = utils::string::count_char(input.clone(), '\n') + 1;
+    let width: u32 = (input.len() as u32 - height) / (height) + 1;
+    let mut grid: Vec<Vec<TCell>> = vec![vec![default_value; (width) as usize]; (height) as usize];
 
     let mut x: u32 = 0;
     let mut y: u32 = 0;
