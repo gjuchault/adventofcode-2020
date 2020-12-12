@@ -119,6 +119,41 @@ where
             bottom_right,
         );
     }
+
+    pub fn get_first_adjacent_cells_dir(
+        &self,
+        x: u32,
+        y: u32,
+        delta_x: i32,
+        delta_y: i32,
+        ignore_cell: TCell,
+    ) -> Option<TCell> {
+        let mut current_x = x;
+        let mut current_y = y;
+        let mut current_cell: TCell;
+        // println!("{}", self.at(x, y));
+        loop {
+            // out of bound -> default
+            if (current_x as i32 + delta_x < 0)
+                || (current_y as i32 + delta_y < 0)
+                || (current_x as i32 + delta_x > (self.width - 1) as i32)
+                || (current_y as i32 + delta_y > (self.height - 1) as i32)
+            {
+                return None;
+            }
+
+            let next_x = current_x as i32 + delta_x;
+            let next_y = current_y as i32 + delta_y;
+
+            current_cell = self.at(next_x as u32, next_y as u32);
+            // println!("{}x{}: {}", next_x, next_y, current_cell);
+            if current_cell != ignore_cell {
+                return Some(current_cell);
+            }
+            current_x = next_x as u32;
+            current_y = next_y as u32;
+        }
+    }
 }
 
 impl<TCell> fmt::Display for Grid<TCell>
